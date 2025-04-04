@@ -18,9 +18,8 @@ make && ./flocksim
 
 ## Inspiration
 
-A recent article published by National Geographic, [What are birds doing when they fly in swarms? Scientists may now know.](https://www.nationalgeographic.com/photography/article/starling-birds-flock-cloud), so I've decided to implement a version of the 1986 Boids algorithm to simulate the phenomenon.
+Inspired by a recent article published by National Geographic, [What are birds doing when they fly in swarms? Scientists may now know.](https://www.nationalgeographic.com/photography/article/starling-birds-flock-cloud):
 
-Taken directly from the article:
 >The team has learned that no matter how large the flock, each starling interacts with only seven neighbors, which might be as much as their brains can handle. The exact neighbors change from second to second, but the starlings don’t track these shifting alliances. They merely fly in the same direction as whichever seven birds are nearest, while staying close but not too close. Alignment, attraction, and avoidance: By plugging this trio of rules into a computer model, along with some basic aerodynamics, Charlotte Hemelrijk from the University of Groningen in the Netherlands created a virtual murmuration that resembled the real deal—and matched the data from Rome.
 
 >This showed that the starlings need no overarching plan, no leader, and no telepathic hive mind. They barely need to communicate at all. Through the simplest of interactions, playing out over distances of a few feet, the breathtaking, sky-spanning complexity of a murmuration emerges.
