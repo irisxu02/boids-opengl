@@ -1,5 +1,5 @@
 # Simulating Flocking Behaviour With Boids Algorithm and OpenGL
-<img src=imgs/t1.png width=40% style="margin:0px 10px"><img src=imgs/t2.png width=40% style="margin:0px 10px">
+<img src=imgs/t1-3d.png width=40% style="margin:0px 10px"><img src=imgs/t2-3d.png width=40% style="margin:0px 10px">
 
 ### Requirements
 - CMake >= 3.2
