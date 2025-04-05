@@ -5,16 +5,16 @@
 #include <algorithm>
 #include <random>
 #include "boid.h"
-
+#include "constants.h"
 
 using namespace glm;
 
-Boid::Boid(float x, float y) {
-    position = vec2(x, y);
+Boid::Boid(float x, float y, float z) {
+    position = vec3(x, y, z);
     std::random_device rd;
     std::mt19937 gen(rd());
     std::normal_distribution<float> dis(0.0f, 1.0f); 
-    vec2 dir = vec2(dis(gen), dis(gen));
+    vec3 dir = vec3(dis(gen), dis(gen), dis(gen));
     velocity = normalize(dir) * MAX_SPEED;
 }
 
@@ -35,18 +35,18 @@ void Boid::update(std::vector<Boid>& boids) {
     if (neighbors.size() > 7) neighbors.resize(7);
 
 
-    vec2 alignment(0, 0); // average of neighbours' velocity
-    vec2 attraction(0, 0); // center of mass - position
-    vec2 avoidance(0, 0); // sum of direction away from neighbours / distance
+    vec3 alignment(0, 0, 0); // average of neighbours' velocity
+    vec3 attraction(0, 0, 0); // center of mass - position
+    vec3 avoidance(0, 0, 0); // sum of direction away from neighbours / distance
     int count = neighbors.size();
 
     if (count > 0) {
-        vec2 center(0, 0);
+        vec3 center(0, 0, 0);
         for (auto* n : neighbors) {
             alignment += n->velocity;
             center += n->position;
 
-            vec2 diff = position - n->position;
+            vec3 diff = position - n->position;
             float dist = length(diff);
             if (dist > 0) avoidance += diff / dist;
         }
@@ -58,9 +58,7 @@ void Boid::update(std::vector<Boid>& boids) {
     float attractionWeight = 0.5f;
     float avoidanceWeight = 1.5f;
 
-    vec2 acceleration = alignment * alignmentWeight +
-                        attraction * attractionWeight +
-                        avoidance * avoidanceWeight;
+    vec3 acceleration = alignment * alignmentWeight + attraction * attractionWeight + avoidance * avoidanceWeight;
 
     velocity += acceleration;
     float speed = length(velocity);
@@ -72,21 +70,44 @@ void Boid::update(std::vector<Boid>& boids) {
     position += velocity;
 
     // Turn around border
-    const int WIDTH = 800, HEIGHT = 800;
     const float turn_factor = 0.5f;
     const int border = 100;
     if (position.x < border) velocity.x += turn_factor;
-    if (position.x > WIDTH-border) velocity.x -= turn_factor;
+    if (position.x > constants::WIDTH-border) velocity.x -= turn_factor;
     if (position.y < border) velocity.y += turn_factor;
-    if (position.y > HEIGHT-border) velocity.y -= turn_factor;
+    if (position.y > constants::HEIGHT-border) velocity.y -= turn_factor;
+    if (position.z < border) velocity.z += turn_factor;
+    if (position.z > constants::DEPTH-border) velocity.z -= turn_factor;
 }
 
 void Boid::draw() {
-    glBegin(GL_TRIANGLES);
-    glColor3f(velocity.x, velocity.y, 1.f);
-    glVertex2f(position.x, position.y);
-    glVertex2f(position.x - 5, position.y + 10);
-    glVertex2f(position.x + 5, position.y + 10);
-    glEnd();
+    glPushMatrix();
+    glTranslatef(position.x, position.y, position.z);
+    drawCone(2.f, 5.f, 20);
+    glPopMatrix();
 }
 
+void Boid::drawCone(float radius, float h, int slices) {
+    glBegin(GL_TRIANGLE_FAN);
+    vec3 normV = normalize(velocity);
+    vec3 rgb = vec3(abs(normV.x), abs(normV.y), abs(normV.z));
+    glColor3f(rgb.x, rgb.y, rgb.z); // TODO: maybe change to color by magnitude (speed)
+    glVertex3f(velocity.x, velocity.y, velocity.z);
+    for (int i = 0; i <= slices; ++i) {
+        float angle = 2.0f * M_PI * i / slices;
+        float x = radius * cos(angle);
+        float y = radius * sin(angle);
+        glVertex3f(x, y, -h);
+    }
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, -h);
+    for (int i = 0; i <= slices; ++i) {
+        float angle = 2.0f * M_PI * i / slices;
+        float x = radius * cos(angle);
+        float y = radius * sin(angle);
+        glVertex3f(x, y, -h);
+    }
+    glEnd();
+}

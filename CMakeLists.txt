@@ -13,5 +13,5 @@ link_directories(${GLFW_LIBRARY_DIRS})
 
 include_directories(/usr/include/glm)
 
-add_executable(${PROJECT_NAME} boid.cpp main.cpp)
+add_executable(${PROJECT_NAME} constants.cpp boid.cpp main.cpp)
 target_link_libraries(${PROJECT_NAME} ${GLFW_LIBRARIES} OpenGL::GL GLEW::GLEW)
