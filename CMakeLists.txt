@@ -8,9 +8,8 @@ cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
-find_path(GLM_INCLUDE_DIR glm/glm.hpp)
+find_package(glm CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME} boid.cpp main.cpp)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLM_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} glfw OpenGL::GL GLEW::GLEW)
+target_link_libraries(${PROJECT_NAME} glfw OpenGL::GL GLEW::GLEW glm::glm)
