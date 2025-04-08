@@ -58,13 +58,16 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libopengl-dev libglew-dev libglfw3-dev libglm-dev
 
+    - name: Install Conan on Windows
+      if: matrix.os == 'windows-latest'
+      run: pip install conan
+
     - name: Install dependencies on Windows
       if: matrix.os == 'windows-latest'
+      id: conan
       run: |
-         git clone https://github.com/microsoft/vcpkg.git
-         cd vcpkg
-         .\bootstrap-vcpkg.bat
-         .\vcpkg install opengl glew glfw3 glm --triplet x64-windows
+        conan profile detect --force
+        conan install . --output-folder=${{ steps.strings.outputs.build-output-dir }} --build=missing
       
     - name: Configure CMake on Ubuntu
       if: matrix.os == 'ubuntu-latest'
@@ -86,8 +89,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake
-        -DVCPKG_TARGET_TRIPLET=x64-windows
+        -DCMAKE_TOOLCHAIN_FILE=${{ steps.conan.outputs.cmake_toolchain_file }}
         -S ${{ github.workspace }}
 
     - name: Build
