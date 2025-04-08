@@ -1,5 +1,6 @@
 [requires]
 opengl/system
+glu/system
 glew/2.2.0
 glfw/3.4
 glm/1.0.1
